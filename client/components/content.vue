@@ -16,10 +16,6 @@ export default {
   components: {
     itemList: itemList
   },
-  data() {
-    return {
-    }
-  },
   methods: {
     resetdata(data) {
       this.$emit('resetdata', data);

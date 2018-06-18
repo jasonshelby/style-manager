@@ -46,7 +46,7 @@
 
         <div class="clear"></div>
 
-        <Modal v-model="modal2" width="360">
+        <Modal v-model="modal" width="360">
           <p slot="header" style="color:#f60;text-align:center">
             <Icon type="information-circled"></Icon>
             <span>删除确认</span>
@@ -73,9 +73,8 @@ export default {
     return {
       updataTime: '',
       loadingStatus : false,
-      modal2: false,
+      modal: false,
       modal_loading: false,
-      msg: {}
     }
   },
   watch: {
@@ -121,7 +120,7 @@ export default {
       this.loadingStatus = false;
     },
     del() {
-      this.modal2 = true;
+      this.modal = true;
     },
     handleDelete(path) {
       this.modal_loading = true;
@@ -135,7 +134,7 @@ export default {
       .then(res => {
         this.$emit('resetdata', JSON.parse(res));
         this.modal_loading = false;
-        this.modal2 = false;
+        this.modal = false;
         this.$Message.success('删除成功');
       })
     },

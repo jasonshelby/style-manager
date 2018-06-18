@@ -3,7 +3,7 @@
     <Header>
       <span class="L-head">曼哈顿样式管理</span>
       <Button class="changeBut" v-if="!isFE" @click="changeToFE" type="success">切换到FE模式</Button>
-      <Button class="changeBut" v-else @click="changeToUI">切换到UI模式</Button>
+      <Button class="changeBut" v-else @click="changeToUE">切换到UE模式</Button>
     </Header>
     <Layout>
       <Sider hide-trigger :style="{background: '#fff'}" ref="side_menu" >
@@ -11,7 +11,6 @@
         <Menu :active-name="activeName" theme="light" width="auto" :open-names="['1']" @on-select="handleTap" >
           <MenuItem name="0" v-if="!isFE">
             <Icon type="plus-round"></Icon>
-            <!-- {{isFE}} -->
             添加文档
           </MenuItem>
           <MenuItem :name="index + 1" v-for="(item, index) in siderData" :key="index + 10">
@@ -37,7 +36,7 @@
         </div>
         <div slot="footer">
             <Button type="ghost" @click="changeToFE">我是FE</Button>
-            <Button type="ghost" @click="changeToUI">我是UI</Button>
+            <Button type="ghost" @click="changeToUE">我是UI</Button>
         </div>
     </Modal>
 
@@ -48,7 +47,6 @@
 
 import Formpage from '../components/form.vue'
 import ContentPage from '../components/content.vue'
-
 
 export default {
   components: {
@@ -64,10 +62,6 @@ export default {
       Alldata: {},
       siderData: {},
       listData: {},//具体到每个
-      headers: {
-          'Content-Type': 'multipart/form-data'
-      },
-      uptoken: "",
       askbut: false
     }
   },
@@ -89,10 +83,8 @@ export default {
     handleRet(msg) {
       this.Alldata = msg;
     },
-    changeToUI() {
+    changeToUE() {
       this.isFE = false;
-      // this.siderNum = 0;
-      // this.activeName = 0;
       localStorage.setItem("isFE", 0);
       this.askbut = false;
     },
@@ -126,7 +118,7 @@ export default {
     if (localStorage.getItem("isFE") === null) {
       this.askbut = true;
     } else if (localStorage.getItem("isFE") == '0'){
-      this.changeToUI();
+      this.changeToUE();
     } else if (localStorage.getItem("isFE") == '1'){
       this.changeToFE();
     }

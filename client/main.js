@@ -6,11 +6,9 @@ import router from './router'
 import iview from 'iview'
 import 'iview/dist/styles/iview.css';
 
-Vue.use(iview)
+Vue.use(iview);
 
 Vue.config.productionTip = false;
-
-// Vue.prototype.$isFE = true;
 
 /* eslint-disable no-new */
 var app = new Vue({

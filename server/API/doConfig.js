@@ -3,7 +3,7 @@ const json = './store/config.json';
 
 module.exports = {
   read(path) {
-    var thunk = fs.readFileSync(json, 'utf-8');
+    const thunk = fs.readFileSync(json, 'utf-8');
     const config = JSON.parse(thunk);
     if (path) {
       const arr = path.split('/');
@@ -17,7 +17,7 @@ module.exports = {
   },
   delete(path){
     const json = this.read();
-    var arr = path.split('/');
+    const arr = path.split('/');
     delete json.files[arr[1]][arr[2]];
     return json;
   },

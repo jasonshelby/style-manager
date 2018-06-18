@@ -44,7 +44,7 @@ export default {
     message: [Array, Object]
   },
   data () {
-    var files = function(rule, value, callback){
+    const files = function(rule, value, callback){
       if(value.sketch == 0 || value.zip == 0){
         return callback(new Error("请上传文件"))
       }else{
