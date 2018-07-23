@@ -7,7 +7,7 @@ module.exports = function (req, res) {
     const json = doConfig.delete(deletePath);
 
     fsSuper.rmdirSync(deletePath,() => {
-      console.log('cheng');
+      console.log('删除成功');
     });
 
     doConfig.write(json);

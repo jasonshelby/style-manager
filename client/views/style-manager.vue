@@ -2,8 +2,8 @@
   <div class="layout">
     <Header>
       <span class="L-head">曼哈顿样式管理</span>
-      <Button class="changeBut" v-if="!isFE" @click="changeToFE" type="success">切换到FE模式</Button>
-      <Button class="changeBut" v-else @click="changeToUE">切换到UE模式</Button>
+      <Button class="changeBut" v-if="!isFE" @click="changeToFE" type="success">当前为UE模式</Button>
+      <Button class="changeBut" v-else @click="changeToUE">当前为FE模式</Button>
     </Header>
     <Layout>
       <Sider hide-trigger :style="{background: '#fff'}" ref="side_menu" >

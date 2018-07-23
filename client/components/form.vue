@@ -22,6 +22,7 @@
         multiple
         :before-upload="handleBeforeUpload"
         type="drag"
+        :max-size="100000000"
         :on-success="handleSuccess"
         :show-upload-list="false"
         action="http://localhost:3000/uploadFile">
