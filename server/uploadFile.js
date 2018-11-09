@@ -18,10 +18,12 @@ const storage = multer.diskStorage({
       cb(null, filename);
     }
 });
+
 const upload = multer({ storage: storage });
 
 function handleForm(req, res, data) {
   let thunk = JSON.parse(data);
+  console.log(thunk);
   thunk.timeId = Date.now();
   formData = thunk;
   pathSpace = `store/${thunk.type}/${thunk.timeId}`;//创建路径
@@ -32,8 +34,9 @@ function handleForm(req, res, data) {
 let project = {};   //配置信息
 let figJson = doConfig.read();
 
-function handleFile(file, res) {
-  const fileExt = file.originalname.replace(/.+\./, '');
+function handleFile(file, data, res) {
+  console.log(11111, file, data);
+  const fileExt = file.originalname.split('.').pop();
   if (fileExt == 'sketch'){
     Object.assign(project, {
       explain: formData.explain,
@@ -57,6 +60,7 @@ function handleFile(file, res) {
     const checkmsg = fsSuper.afterZip(pathSpace, file.originalname, 'upload');
 
     if (checkmsg === true) {//文件合格
+
       delete figJson.error;
       doConfig.write(figJson);
       console.log('新建配置', project);
@@ -74,12 +78,14 @@ module.exports = {
   upload: upload,
   func: function (req, res) {
 
-    req.on('data',function(data) {
+    req.on('data', function(data) {
+      // demoData(req, res, data);
       handleForm(req, res, data);
     });
 
     if(req.file) {
-      handleFile(req.file, res);
+      // demoFile(req.file, res);
+      handleFile(req.file, req.body, res);
     }
 
   }

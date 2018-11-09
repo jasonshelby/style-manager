@@ -5,6 +5,7 @@ const init = require('./init');
 const uploadFile = require('./uploadFile');
 const updataFile = require('./updataFile');
 const deleteFile = require('./deleteFile');
+const demo = require('./demo');
 
 
 app.use('/store', express.static('./store'));
@@ -12,9 +13,8 @@ app.all('*', crossDomain);
 app.get('/', init);
 app.post('/uploadFile', uploadFile.upload.single('file'), uploadFile.func);
 app.post('/updataFile', updataFile.upload.single('file'), updataFile.func);
-app.post('/deleteFile/', deleteFile);    
-
-
+app.post('/deleteFile/', deleteFile);
+app.post('/demo', demo.upload.any(), demo.func);
 
 app.listen(3000, function () {
     console.log('Example app listening on port 3000!');

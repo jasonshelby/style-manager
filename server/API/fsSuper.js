@@ -63,7 +63,9 @@ module.exports = {
     if(checkmsg === true){//文件合格
       fs.renameSync(pathSpace+ '/fornow.zip', pathSpace+ '/exportHtml.zip');
       this.rmdirSync(pathSpace + '/static');
+      //重命名
       fs.renameSync(pathSpace+ '/'+ filename.split('.')[0], pathSpace+ '/static');
+      //删除多余文件
       this.rmdirSync(pathSpace + '/__MACOSX');
     } else {//文件不合格
       if(action == 'upload') {
