@@ -1,12 +1,12 @@
 const doConfig = require('./services/config-service');
-const fsSuper = require('./API/fsSuper');
+const { rmdirSync } = require('./services/file-service');
 
 module.exports = function (req, res) {
   req.on('data',function(data) {
     const deletePath = data.toString();
     const json = doConfig.delete(deletePath);
 
-    fsSuper.rmdirSync(deletePath,() => {
+    rmdirSync(deletePath,() => {
       console.log('删除成功');
     });
 

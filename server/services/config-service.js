@@ -1,7 +1,18 @@
 const fs = require('fs');
 const json = './store/config.json';
 
+function parseFormData (files, data) {
+  const result = Object.assign({}, JSON.parse(data.detail));
+  
+  files.forEach(item => {
+    const fileName = item.fieldname;
+    result[fileName + 'Name'] = item.originalname;
+    result[fileName + 'Size'] = item.size;
+  });
+  return result;
+}
 module.exports = {
+  parseFormData,
   read(path) {
     const thunk = fs.readFileSync(json, 'utf-8');
     const config = JSON.parse(thunk);

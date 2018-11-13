@@ -1,6 +1,6 @@
 //接受前端上传来的文件
 const multer = require('multer');
-const fsSuper = require('./API/fsSuper');
+const { mkdirSync } = require('./services/file-service');
 const doConfig = require('./services/config-service');
 const configDomain = 'http://localhost:3000/';
 
@@ -27,7 +27,7 @@ function handleForm(req, res, data) {
   thunk.timeId = Date.now();
   formData = thunk;
   pathSpace = `store/${thunk.type}/${thunk.timeId}`;//创建路径
-  fsSuper.mkdirSync(pathSpace,0,e => e ? console.log('储存文件创建失败') : console.log('储存文件创建成功'));//按路径添加文件夹
+  mkdirSync(pathSpace,0,e => e ? console.log('储存文件创建失败') : console.log('储存文件创建成功'));//按路径添加文件夹
   res.json('接受并处理表单');
 }
 
