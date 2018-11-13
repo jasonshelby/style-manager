@@ -37,7 +37,7 @@ module.exports = {
     function inner(path,dirs){
         var arr = fs.readdirSync(path);
         for(var i = 0, el ; el = arr[i++];){
-            iterator(path+"/"+el,dirs);
+            iterator(path + '/' + el,dirs);
         }
     }
     return function(dir,cb){
@@ -51,43 +51,55 @@ module.exports = {
             }
             cb()
         }catch(e){//如果文件或目录本来就不存在，fs.statSync会报错，不过我们还是当成没有异常发生
-            e.code === "ENOENT" ? cb() : cb(e);
+            e.code === 'ENOENT' ? cb() : cb(e);
         }
     };
   })(),
-  afterZip(pathSpace, filename, action) {
-    let unzip = new AdmZip(pathSpace + '/fornow.zip');
-    unzip.extractAllTo(pathSpace, /*overwrite*/true);
 
-    const checkmsg = this.check(pathSpace+ '/'+ filename.split('.')[0]);
-    if(checkmsg === true){//文件合格
-      fs.renameSync(pathSpace+ '/fornow.zip', pathSpace+ '/exportHtml.zip');
-      this.rmdirSync(pathSpace + '/static');
-      //重命名
-      fs.renameSync(pathSpace+ '/'+ filename.split('.')[0], pathSpace+ '/static');
-      //删除多余文件
-      this.rmdirSync(pathSpace + '/__MACOSX');
-    } else {//文件不合格
-      if(action == 'upload') {
-        this.rmdirSync(pathSpace);
-      } else if (action == 'updata'){
-        this.rmdirSync(pathSpace + '/fornow.zip');
-        this.rmdirSync(pathSpace+ '/'+ filename.split('.')[0]);
-      }
-    }
-    return checkmsg;
+  UnzipToPosition(from, to) {
+    console.log(from, to)
+    let unzip = new AdmZip(from);
+    unzip.extractAllTo(to, /*overwrite*/true);
   },
-  check(filepath) {
-    let Standard = [ 'assets', 'index.html', 'links', 'preview' ];
-    let subFiles = fs.readdirSync(filepath);
-    let result = true;
 
-    Standard.forEach((item) => {
-      if(subFiles.indexOf(item) == -1) {
-        result = item;
-      }
-    });
+  checkInnerChild(filePath, childs = []) {
+    let subFiles = fs.readdirSync(filePath);
+    return childs.every(item => subFiles.indexOf(item) != -1)
+  },
 
-    return result;
-  }
+  // afterZip(pathSpace, filename, action) {
+  //   let unzip = new AdmZip(pathSpace + '/fornow.zip');
+  //   unzip.extractAllTo(pathSpace, /*overwrite*/true);
+
+  //   const checkmsg = this.check(pathSpace+ '/'+ filename.split('.')[0]);
+  //   if(checkmsg === true){//文件合格
+  //     fs.renameSync(pathSpace+ '/fornow.zip', pathSpace+ '/exportHtml.zip');
+  //     this.rmdirSync(pathSpace + '/static');
+  //     //重命名
+  //     fs.renameSync(pathSpace+ '/'+ filename.split('.')[0], pathSpace+ '/static');
+  //     //删除多余文件
+  //     this.rmdirSync(pathSpace + '/__MACOSX');
+  //   } else {//文件不合格
+  //     if(action == 'upload') {
+  //       this.rmdirSync(pathSpace);
+  //     } else if (action == 'updata'){
+  //       this.rmdirSync(pathSpace + '/fornow.zip');
+  //       this.rmdirSync(pathSpace+ '/'+ filename.split('.')[0]);
+  //     }
+  //   }
+  //   return checkmsg;
+  // },
+  // check(filepath) {
+  //   let Standard = [ 'assets', 'index.html', 'links', 'preview' ];
+  //   let subFiles = fs.readdirSync(filepath);
+  //   let result = true;
+
+  //   Standard.forEach((item) => {
+  //     if(subFiles.indexOf(item) == -1) {
+  //       result = item;
+  //     }
+  //   });
+
+  //   return result;
+  // }
 };

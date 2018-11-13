@@ -72,8 +72,6 @@ export default {
         type: [{required: true, message: "项目类型不能为空", type:"string", trigger: 'blur'}],
         explain: [{required: false, type:"string", trigger: 'blur'}],
         files: [{validator: (rule, value, callback) => {
-          // console.log(value == this.files)
-          // console.log(this)
           if(this.files.sketch == 0 || this.files.zip == 0){
             return callback(new Error("请上传文件"))
           }else{
@@ -89,11 +87,11 @@ export default {
       const fileExt = newFile.name.replace(/.+\./, "").toLowerCase()
 
       if (this.files[fileExt] == 0){
-          this.files[fileExt] = newFile;
-          this.$Message.success(`成功保存${fileExt}文件`)
+        this.files[fileExt] = newFile;
+        this.$Message.success(`成功保存${fileExt}文件`)
       } else {
-          this.files[fileExt] = newFile;
-          this.$Message.success(`成功替换${fileExt}文件`)
+        this.files[fileExt] = newFile;
+        this.$Message.success(`成功替换${fileExt}文件`)
       }
       return false;
     },
@@ -108,11 +106,21 @@ export default {
           myData.append('zip', this.files.zip)
           myData.append('sketch', this.files.sketch)
 
+
+          // fetch('http://localhost:3000/demo',{
+          //   method: "POST",
+          //   body: myData,
+          // })
           var xhr = new XMLHttpRequest()
           xhr.open("POST", "http://localhost:3000/demo", true);
 
           xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
+              var body = document.body
+              var a = document.createElement('a')
+              a.text = 'hahah'
+              a.href = xhr.responseText
+              body.appendChild(a)
               console.log(xhr.responseText)
             }
           }

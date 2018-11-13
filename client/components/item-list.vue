@@ -92,7 +92,6 @@ export default {
       let minute = date.getMinutes(timeNum).toString();
         if(minute.length == 1) {
           minute = '0' + minute;
-          console.log(22)
         }
       this.updataTime = `${date.getMonth(timeNum) + 1}月${date.getDate(timeNum) + 1}日
         ${date.getHours(timeNum)}:${minute}`;
