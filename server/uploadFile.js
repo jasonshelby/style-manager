@@ -1,7 +1,7 @@
 //接受前端上传来的文件
 const multer = require('multer');
 const fsSuper = require('./API/fsSuper');
-const doConfig = require('./API/doConfig');
+const doConfig = require('./services/config-service');
 const configDomain = 'http://localhost:3000/';
 
 

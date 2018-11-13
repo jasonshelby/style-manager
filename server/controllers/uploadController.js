@@ -1,32 +1,11 @@
 const multer = require('multer');
-const fs = require('fs');
-const fsSuper = require('./API/fsSuper');
-const doConfig = require('./API/doConfig');
+const fsSuper = require('../API/fsSuper');
+const doConfig = require('../services/config-service');
 const configDomain = 'http://localhost:3000/';
-
-
-function parseFormData (files, data) {
-  const result = Object.assign({}, JSON.parse(data.detail));
-  
-  files.forEach(item => {
-    const fileName = item.fieldname;
-    result[fileName + 'Name'] = item.originalname;
-    result[fileName + 'Size'] = item.size;
-  });
-  return result;
-}
-
-function checkFile(config) {
-  const subFiles = fs.readdirSync(config.path);
-  const directorys = subFiles.filter(item => !/\.(zip)|(sketch)/.test(item))
-  if(directorys.length == 1) {
-    config.originalZipName = directorys[0]
-    return fsSuper.checkInnerChild(config.path + directorys.pop(), [ 'assets', 'index.html', 'links', 'preview' ])
-  } else {
-    //出现两个文件夹视为异常，文件不合格
-    return false
-  }
-}
+const {
+  parseFormData,
+  checkFile,
+} = require('../services/file-service')
 
 
 function setConfig(config) {
@@ -54,7 +33,7 @@ module.exports = {
     }
   })}),
 
-  func: (req, res)=> {
+  add: (req, res)=> {
     const newConfig = parseFormData(req.files, req.body)
     const path = `store/${newConfig.type}/${newConfig.name}/`
     newConfig.path = path
@@ -66,7 +45,6 @@ module.exports = {
     if(checkFile(newConfig)) {
       console.log('文件合格')
 
-      var mark = /到此运行完美/
       // setFiles(newConfig)
       setConfig(newConfig)
       console.log(newConfig)
@@ -74,8 +52,6 @@ module.exports = {
     } else {
       console.log('文件不合格')
       fsSuper.rmdirSync(path, e => e ? console.log('删除失败') : console.log('不合格文件删除成功'))
-      fsSuper.rmdirSync(path);
-      //文件校验失败
       res.json('errorMessage');
     }
   }

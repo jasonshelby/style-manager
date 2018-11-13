@@ -1,4 +1,4 @@
-const doConfig = require('./API/doConfig');
+const doConfig = require('./services/config-service');
 const fsSuper = require('./API/fsSuper');
 
 module.exports = function (req, res) {

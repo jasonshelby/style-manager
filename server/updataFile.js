@@ -1,7 +1,7 @@
 //接受前端更新的文件
 const multer = require('multer');
 const fsSuper = require('./API/fsSuper');
-const doConfig = require('./API/doConfig');
+const doConfig = require('./services/config-service');
 
 
 let pathSpace = ''; //文件储存

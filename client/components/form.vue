@@ -112,7 +112,7 @@ export default {
           //   body: myData,
           // })
           var xhr = new XMLHttpRequest()
-          xhr.open("POST", "http://localhost:3000/demo", true);
+          xhr.open("POST", "http://localhost:3000/uploadFile", true);
 
           xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
