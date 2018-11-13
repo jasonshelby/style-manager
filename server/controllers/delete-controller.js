@@ -1,5 +1,5 @@
-const doConfig = require('./services/config-service');
-const { rmdirSync } = require('./services/file-service');
+const doConfig = require('../services/config-service');
+const { rmdirSync } = require('../services/file-service');
 
 module.exports = function (req, res) {
   req.on('data',function(data) {

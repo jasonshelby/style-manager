@@ -2,17 +2,6 @@ const fs = require('fs');
 const configDomain = 'http://localhost:3000/';
 const json = './store/config.json';
 
-function parseFormData (files, data) {
-  const result = Object.assign({}, JSON.parse(data.detail));
-  
-  files.forEach(item => {
-    const fileName = item.fieldname;
-    result[fileName + 'Name'] = item.originalname;
-    result[fileName + 'Size'] = item.size;
-  });
-  return result;
-}
-
 function read (path) {
   const thunk = fs.readFileSync(json, 'utf-8');
   const config = JSON.parse(thunk);
@@ -28,9 +17,19 @@ function write(data) {
   fs.writeFileSync(json, content);
 }
 
+function parseFormData (files, data) {
+  const result = Object.assign({}, JSON.parse(data.detail));
+  
+  files.forEach(item => {
+    const fileName = item.fieldname;
+    result[fileName + 'Name'] = item.originalname;
+    result[fileName + 'Size'] = item.size;
+  });
+  return result;
+}
+
 function setConfig(config) {
   config.static = configDomain +config.path+ config.originalZipName
-  console.log('settingConfig')
   let figJson = read();
 
   write(figJson);

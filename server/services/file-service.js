@@ -56,7 +56,6 @@ const rmdirSync = (function(){
   }
   function inner(path,dirs){
       var arr = fs.readdirSync(path);
-      console.log(arr)
       for(var i = 0, el ; el = arr[i++];){
           iterator(path + '/' + el,dirs);
       }
