@@ -1,6 +1,5 @@
 const multer = require('multer');
 const doConfig = require('../services/config-service');
-const configDomain = 'http://localhost:3000/';
 const {
   checkFile,
   mkdirSync,
@@ -8,14 +7,26 @@ const {
   rmdirSync,
 } = require('../services/file-service')
 
+const uploadFile = (req, res)=> {
+  const newConfig = doConfig.parseFormData(req.files, req.body)
+  const path = `store/${newConfig.type}/${newConfig.name}/`
+  newConfig.path = path
 
-function setConfig(config) {
-  config.static = configDomain +config.path+ config.originalZipName
-  console.log('settingConfig')
-  let figJson = doConfig.read();
+  UnzipToPosition(path + newConfig.zipName, path);
+  rmdirSync(path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
 
-  doConfig.write(figJson);
+  if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview' ])) {
+    console.log('文件合格')
+    doConfig.setConfig(newConfig)
+    console.log(newConfig)
+    res.json(newConfig);
+  } else {
+    console.log('文件不合格')
+    rmdirSync(path, e => e ? console.log('删除失败') : console.log('不合格文件删除成功'))
+    res.json('errorMessage');
+  }
 }
+
 
 module.exports = {
   upload: multer({ storage: multer.diskStorage({
@@ -33,26 +44,7 @@ module.exports = {
       cb(null, file.originalname);
     }
   })}),
-
-  add: (req, res)=> {
-    const newConfig = doConfig.parseFormData(req.files, req.body)
-    const path = `store/${newConfig.type}/${newConfig.name}/`
-    newConfig.path = path
-
-    UnzipToPosition(path + newConfig.zipName, path);
-    rmdirSync(path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
-
-    if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview' ])) {
-      console.log('文件合格')
-      setConfig(newConfig)
-      console.log(newConfig)
-      res.json(newConfig);
-    } else {
-      console.log('文件不合格')
-      rmdirSync(path, e => e ? console.log('删除失败') : console.log('不合格文件删除成功'))
-      res.json('errorMessage');
-    }
-  }
+  uploadFile,
 };
 
 //重命名

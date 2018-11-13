@@ -1,4 +1,5 @@
 const fs = require('fs');
+const configDomain = 'http://localhost:3000/';
 const json = './store/config.json';
 
 function parseFormData (files, data) {
@@ -11,21 +12,35 @@ function parseFormData (files, data) {
   });
   return result;
 }
+
+function read (path) {
+  const thunk = fs.readFileSync(json, 'utf-8');
+  const config = JSON.parse(thunk);
+  if (path) {
+    const arr = path.split('/');
+    return config.files[arr[1]][arr[2]];
+  }
+  return config;
+}
+
+function write(data) {
+  let content = JSON.stringify(data);
+  fs.writeFileSync(json, content);
+}
+
+function setConfig(config) {
+  config.static = configDomain +config.path+ config.originalZipName
+  console.log('settingConfig')
+  let figJson = read();
+
+  write(figJson);
+}
+
 module.exports = {
   parseFormData,
-  read(path) {
-    const thunk = fs.readFileSync(json, 'utf-8');
-    const config = JSON.parse(thunk);
-    if (path) {
-      const arr = path.split('/');
-      return config.files[arr[1]][arr[2]];
-    }
-    return config;
-  },
-  write(data) {
-    let content = JSON.stringify(data);
-    fs.writeFileSync(json, content);
-  },
+  read,
+  write,
+  setConfig,
   delete(path){
     const json = this.read();
     const arr = path.split('/');

@@ -1,4 +1,4 @@
-const doConfig = require('./services/config-service');
+const doConfig = require('../services/config-service');
 
 module.exports = function (req, res) {
 
