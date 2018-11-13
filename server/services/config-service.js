@@ -2,7 +2,7 @@ const fs = require('fs');
 const configDomain = 'http://localhost:3000/';
 const json = './store/config.json';
 
-function read (path) {
+function readConfig (path) {
   const thunk = fs.readFileSync(json, 'utf-8');
   const config = JSON.parse(thunk);
   if (path) {
@@ -12,7 +12,7 @@ function read (path) {
   return config;
 }
 
-function write(data) {
+function writeConfig(data) {
   let content = JSON.stringify(data);
   fs.writeFileSync(json, content);
 }
@@ -30,38 +30,38 @@ function parseFormData (files, data) {
 
 function setConfig(config) {
   config.static = configDomain +config.path+ config.originalZipName
-  let figJson = read();
+  let figJson = readConfig();
 
-  write(figJson);
+  writeConfig(figJson);
 }
 
 module.exports = {
   parseFormData,
-  read,
-  write,
+  readConfig,
+  writeConfig,
   setConfig,
-  delete(path){
-    const json = this.read();
+  deleteConfig(path){
+    const json = this.readConfig();
     const arr = path.split('/');
     delete json.files[arr[1]][arr[2]];
     return json;
   },
   clear(){
-    const json = this.read();
+    const json = this.readConfig();
     const types = json.types;
     types.forEach((item) => {
       json.files[item] = {};
     });
-    this.write(json);
+    this.writeConfig(json);
   },
   reInit() {
-    const json = this.read();
+    const json = this.readConfig();
     const types = json.types;
     types.forEach((item) => {
       if (!json.files[item]) {
         json.files[item] = {};
       }
     });
-    this.write(json);
+    this.writeConfig(json);
   }
 };

@@ -1,7 +1,10 @@
 //接受前端更新的文件
 const multer = require('multer');
 const fsSuper = require('../services/file-service');
-const doConfig = require('../services/config-service');
+const {
+  readConfig,
+  writeConfig,
+} = require('../services/config-service');
 
 
 let pathSpace = ''; //文件储存
@@ -20,13 +23,13 @@ const upload = multer({ storage: storage });
 let oldProject = {};
 function handlePath(req, res, data) {
   pathSpace = data.toString();
-  oldProject = doConfig.read(pathSpace);
+  oldProject = readConfig(pathSpace);
   console.log('旧数据', oldProject);
   res.json('收到');
 }
 let checkmsg = '';
 function handleFile(file, res) {
-  let figJson = doConfig.read();
+  let figJson = readConfig();
   let newProject = {};
   const fileExt = file.originalname.replace(/.+\./, '');
 
@@ -51,7 +54,7 @@ function handleFile(file, res) {
     console.log('更新配置', newProject);
     const arr = pathSpace.split('/');
     figJson.files[arr[1]][arr[2]] = newProject;
-    doConfig.write(figJson);
+    writeConfig(figJson);
   } else if (typeof checkmsg == 'string') {
     console.log('文件不合格，配置未更新');
     figJson.error = checkmsg;

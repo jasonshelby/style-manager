@@ -1,6 +1,5 @@
-const doConfig = require('../services/config-service');
+const { readConfig } = require('../services/config-service');
 
 module.exports = function (req, res) {
-
-    res.json(doConfig.read());
+    res.json(readConfig());
 };

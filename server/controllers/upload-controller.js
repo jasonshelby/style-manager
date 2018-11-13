@@ -1,5 +1,8 @@
 const multer = require('multer');
-const doConfig = require('../services/config-service');
+const {
+  parseFormData,
+  setConfig,
+} = require('../services/config-service');
 const {
   checkFile,
   mkdirSync,
@@ -8,7 +11,7 @@ const {
 } = require('../services/file-service')
 
 const uploadFile = (req, res)=> {
-  const newConfig = doConfig.parseFormData(req.files, req.body)
+  const newConfig = parseFormData(req.files, req.body)
   const path = `store/${newConfig.type}/${newConfig.name}/`
   newConfig.path = path
 
@@ -17,7 +20,7 @@ const uploadFile = (req, res)=> {
 
   if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview' ])) {
     console.log('文件合格')
-    doConfig.setConfig(newConfig)
+    setConfig(newConfig)
     console.log(newConfig)
     res.json(newConfig);
   } else {
@@ -26,7 +29,6 @@ const uploadFile = (req, res)=> {
     res.json('errorMessage');
   }
 }
-
 
 module.exports = {
   upload: multer({ storage: multer.diskStorage({

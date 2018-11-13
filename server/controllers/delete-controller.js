@@ -1,16 +1,16 @@
-const doConfig = require('../services/config-service');
+const { deleteConfig, writeConfig } = require('../services/config-service');
 const { rmdirSync } = require('../services/file-service');
 
 module.exports = function (req, res) {
   req.on('data',function(data) {
     const deletePath = data.toString();
-    const json = doConfig.delete(deletePath);
+    const json = deleteConfig(deletePath);
 
     rmdirSync(deletePath,() => {
       console.log('删除成功');
     });
 
-    doConfig.write(json);
+    writeConfig(json);
     res.json(json);
   });
 };
