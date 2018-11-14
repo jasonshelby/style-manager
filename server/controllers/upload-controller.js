@@ -1,7 +1,8 @@
 const multer = require('multer');
 const {
   parseFormData,
-  setConfig,
+  // setConfig,
+  updataConfig,
 } = require('../services/config-service');
 const {
   checkFile,
@@ -10,43 +11,85 @@ const {
   rmdirSync,
 } = require('../services/file-service')
 
+const router = multer({ storage: multer.diskStorage({
+  //设置路径的钩子
+  destination: function (req, file, cb) {
+    const detail = JSON.parse(req.body.detail)
+    const path = `store/${detail.type}/${detail.name}/`
+    mkdirSync(path, 0, e => e ? console.log('储存文件夹创建失败') : console.log('储存文件创建成功'));//按路径添加文件夹
+
+    cb(null, path);
+  },
+  //设置文件名的钩子
+  filename: function (req, file, cb) {
+    // const filename = (file.originalname.split('.')[1] == 'zip') ? 'fornow.zip' : 'origin.sketch';
+    cb(null, file.originalname);
+  }
+})})
+
 const uploadFile = (req, res)=> {
   const newConfig = parseFormData(req.files, req.body)
-  const path = `store/${newConfig.type}/${newConfig.name}/`
-  newConfig.path = path
 
-  UnzipToPosition(path + newConfig.zipName, path);
-  rmdirSync(path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
+  UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
+  rmdirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
 
-  if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview' ])) {
-    console.log('文件合格')
-    setConfig(newConfig)
-    console.log(newConfig)
-    res.json(newConfig);
+  if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
+    updataConfig(newConfig)
+    
+    res.json({
+      success: true,
+      data: newConfig,
+      errorMessage: null,
+    });
   } else {
-    console.log('文件不合格')
-    rmdirSync(path, e => e ? console.log('删除失败') : console.log('不合格文件删除成功'))
-    res.json('errorMessage');
+    rmdirSync(newConfig.path, e => e ? console.log('删除失败') : console.log('不合格文件删除成功'))
+    res.json({
+      success: false,
+      data: null,
+      errorMessage: '文件不合格',
+    })
   }
 }
 
-module.exports = {
-  upload: multer({ storage: multer.diskStorage({
-    //设置路径的钩子
-    destination: function (req, file, cb) {
-      const detail = JSON.parse(req.body.detail)
-      const path = `store/${detail.type}/${detail.name}/`
-      mkdirSync(path, 0, e => e ? console.log('储存文件夹创建失败') : console.log('储存文件创建成功'));//按路径添加文件夹
+const updataFile = (req, res) => {
+  const newConfig = parseFormData(req.files, req.body)
 
-      cb(null, path);
-    },
-    //设置文件名的钩子
-    filename: function (req, file, cb) {
-      // const filename = (file.originalname.split('.')[1] == 'zip') ? 'fornow.zip' : 'origin.sketch';
-      cb(null, file.originalname);
+  if(newConfig.zipName) {
+    UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
+    rmdirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
+
+    if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
+      updataConfig(newConfig)
+
+      res.json({
+        success: true,
+        data: updataConfig(newConfig),
+        errorMessage: null,
+      })
+    } else {
+      res.json({
+        success: false,
+        data: null,
+        errorMessage: '文件不合格'
+      })
     }
-  })}),
+  }
+
+  if(newConfig.sketchName) {
+    //...
+    res.json({
+      success: true,
+      data: null,
+      errorMessage: '文件不合格'
+    })
+  }
+
+}
+
+module.exports = {
+  router,
   uploadFile,
+  updataFile,
 };
 
 //重命名

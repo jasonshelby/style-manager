@@ -17,7 +17,6 @@ function checkFile (config, checkChilds) {
 }
 
 function UnzipToPosition(from, to) {
-  console.log(from, to)
   let unzip = new AdmZip(from);
   unzip.extractAllTo(to, /*overwrite*/true);
 }

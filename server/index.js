@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
 const homeController = require('./controllers/home-controller');
-const uploadController = require('./controllers/upload-controller');
+const fileController = require('./controllers/upload-controller');
 const deleteController = require('./controllers/delete-controller');
-const updataController = require('./controllers/updata-controller');
+// const fileController = require('./controllers/updata-controller');
 
 app.all('*', function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -15,8 +15,8 @@ app.all('*', function(req, res, next) {
 
 app.use('/store', express.static('./store'));
 app.get('/', homeController);
-app.post('/uploadFile/', uploadController.upload.any(), uploadController.uploadFile);
-app.post('/updataFile', updataController.upload.single('file'), updataController.func);
+app.post('/uploadFile/', fileController.router.any(), fileController.uploadFile);
+app.post('/updataFile/', fileController.router.single('file'), fileController.updataFile);
 app.post('/deleteFile/', deleteController);
 
 app.listen(3000, function () {
