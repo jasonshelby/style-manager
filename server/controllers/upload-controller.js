@@ -1,22 +1,22 @@
 const multer = require('multer');
 const {
   parseFormData,
-  // setConfig,
   updataConfig,
 } = require('../services/config-service');
 const {
-  checkFile,
-  mkdirSync,
   UnzipToPosition,
-  rmdirSync,
+  checkFile,
+  makedirSync,
+  removeDirSync,
 } = require('../services/file-service')
+const fs = require('fs');
 
 const router = multer({ storage: multer.diskStorage({
   //设置路径的钩子
   destination: function (req, file, cb) {
     const detail = JSON.parse(req.body.detail)
     const path = `store/${detail.type}/${detail.name}/`
-    mkdirSync(path, 0, e => e ? console.log('储存文件夹创建失败') : console.log('储存文件创建成功'));//按路径添加文件夹
+    makedirSync(path, 0, e => e ? console.log('储存文件夹创建失败') : console.log('储存文件创建成功'));//按路径添加文件夹
 
     cb(null, path);
   },
@@ -31,9 +31,10 @@ const uploadFile = (req, res)=> {
   const newConfig = parseFormData(req.files, req.body)
 
   UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
-  rmdirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
+  removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
 
   if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
+    fs.renameSync(newConfig.path + newConfig.originalZipName, newConfig.path+ 'static');
     updataConfig(newConfig)
     
     res.json({
@@ -42,7 +43,7 @@ const uploadFile = (req, res)=> {
       errorMessage: null,
     });
   } else {
-    rmdirSync(newConfig.path, e => e ? console.log('删除失败') : console.log('不合格文件删除成功'))
+    removeDirSync(newConfig.path, e => e ? console.log('删除失败') : console.log('不合格文件删除成功'))
     res.json({
       success: false,
       data: null,
@@ -56,7 +57,7 @@ const updataFile = (req, res) => {
 
   if(newConfig.zipName) {
     UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
-    rmdirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
+    removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
 
     if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
       updataConfig(newConfig)
@@ -95,4 +96,4 @@ module.exports = {
 //重命名
 // fs.renameSync(pathSpace+ '/'+ filename.split('.')[0], pathSpace+ '/static');
 //删除多余文件
-// this.rmdirSync(pathSpace + '/__MACOSX');
+// this.removeDirSync(pathSpace + '/__MACOSX');

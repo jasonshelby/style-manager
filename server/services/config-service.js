@@ -25,16 +25,16 @@ function parseFormData (files, data) {
     result[fileName + 'Size'] = item.size;
   });
   result.path = `store/${result.type}/${result.name}/`
+  result.updataTime = Date.now()
 
   return result;
 }
 
 function updataConfig(newConfig) {
-  console.log('入口', newConfig)
-
   let globolConfig = readConfig()
-
   let projectMessage = globolConfig.files[newConfig.type][newConfig.name]
+  newConfig.static = configDomain + newConfig.path
+
   if(projectMessage) {
     //替换
     projectMessage = Object.assign(projectMessage, newConfig);
@@ -42,27 +42,16 @@ function updataConfig(newConfig) {
     //添加
     globolConfig.files[newConfig.type][newConfig.name] = newConfig
   }
-
-  console.log(globolConfig)
-
-
-
   writeConfig(globolConfig)
-  return projectMessage
+
+  return globolConfig.files
 }
 
-function setConfig(config) {
-  config.static = configDomain +config.path+ config.originalZipName
-  let figJson = readConfig();
-
-  writeConfig(figJson);
-}
 
 module.exports = {
   parseFormData,
   readConfig,
   writeConfig,
-  setConfig,
   updataConfig,
   deleteConfig(path){
     const json = this.readConfig();

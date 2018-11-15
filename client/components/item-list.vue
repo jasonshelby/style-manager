@@ -3,7 +3,7 @@
       <Card class="item-card">
         <p slot="title" class="card-title">
           <Icon type="ios-film-outline"></Icon>
-          <span>{{ message.projectName }}</span> 
+          <span>{{ message.name }}</span> 
         </p>
         <span slot="extra" class="card-extra">
           <Icon type="ios-timer-outline"></Icon>
@@ -11,19 +11,19 @@
         </span>
         <ButtonGroup class="f-left">
           <span> </span>
-          <Button type="ghost" @click="handleCheckout(message.configDomain + message.htmlPath)" >
+          <Button type="ghost" @click="handleCheckout(message.static + 'static/index.html')" >
             <Icon type="ios-eye"></Icon>
             查看
           </Button>
           <Button 
             type="ghost" 
             class="f-left"
-            @click="handleDownLoad(message.configDomain + message.path + '/exportHtml.zip', message.zipName)"
+            @click="handleDownLoad(message.static + message.zipName, message.zipName)"
             v-show="status">下载zip</Button>
           <Button 
             type="ghost" 
             class="f-left"
-            @click="handleDownLoad(message.configDomain + message.path + '/origin.sketch', message.sketchName)"
+            @click="handleDownLoad(message.configDomain + message.sketchName, message.sketchName)"
             v-show="status">下载sketch</Button>
         </ButtonGroup>
         <Button type="ghost" @click="del()" class="f-right">

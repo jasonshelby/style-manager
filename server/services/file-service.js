@@ -21,7 +21,7 @@ function UnzipToPosition(from, to) {
   unzip.extractAllTo(to, /*overwrite*/true);
 }
 
-function mkdirSync(url,mode,cb){
+function makedirSync(url,mode,cb){
   var arr = url.split('/');
   mode = mode || 0755;
   cb = cb || function(){};
@@ -43,7 +43,7 @@ function mkdirSync(url,mode,cb){
   }
   arr.length && inner(arr.shift());
 }
-const rmdirSync = (function(){
+const removeDirSync = (function(){
   function iterator(url,dirs){
       var stat = fs.statSync(url);
       if(stat.isDirectory()){
@@ -78,6 +78,6 @@ const rmdirSync = (function(){
 module.exports = {
   checkFile,
   UnzipToPosition,
-  mkdirSync,
-  rmdirSync,
+  makedirSync,
+  removeDirSync,
 }

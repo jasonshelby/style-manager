@@ -1,7 +1,7 @@
 <template>
     <div>
-      <itemList v-for="(item, index) in message" :message="item" :status="status" :key="index + 100" @resetdata="resetdata"></itemList>
-      <itemList v-for="(item, index) in message" :message="item" :status="status" :key="index + 100" @resetdata="resetdata"></itemList>
+      {{message}}
+      <itemList v-for="(item, index) in message" :message="item" :status="status" :key="index" @resetdata="resetdata"></itemList>
     </div>
 </template>  
 
@@ -14,6 +14,10 @@ export default {
     return {
       name: 'sdsd',
     }
+  },
+  mounted() {
+    console.log(this.message)
+    console.log(this.status)
   },
   props: {
     message: Object,

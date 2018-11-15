@@ -106,10 +106,14 @@ export default {
   created() {
     fetch('http://localhost:3000/')
     .then(res => {
+      console.log(111, res)
         return res.text();
     })
     .then(res => {
+
       const data = JSON.parse(res);
+      console.log(222, res)
+
       this.Alldata = data;
       this.siderData = data.types;
     })
