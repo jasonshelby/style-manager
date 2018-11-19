@@ -154,14 +154,15 @@ export default {
       })
       .then(res => {
         res = JSON.parse(res)
-        console.log(res)
+        this.modal_loading = false;
+        this.modal = false;
         if (res.success) {
           this.$emit('updataStore', {
             deleteMessage: res.data
           });
-          this.modal_loading = false;
-          this.modal = false;
           this.$Message.success('删除成功');
+        } else {
+          this.$Message.success('删除失败');
         }
         
       })
