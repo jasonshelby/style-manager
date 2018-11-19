@@ -21,8 +21,8 @@
       </Sider>
 
       <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
-        <Formpage v-if="siderNum == 0" :message="siderData" @updataStore="updataStore" ></Formpage>
-        <ContentPage v-else :message="listData" :updataStore="updataStore" :status="isFE"></ContentPage>
+        <Formpage v-if="siderNum == 0" :message="siderData" @updateStore="updateStore" ></Formpage>
+        <ContentPage v-else :message="listData" :updateStore="updateStore" :status="isFE"></ContentPage>
       </Content>
     </Layout>
 
@@ -80,7 +80,7 @@ export default {
       this.siderNum = index;
       this.listData = this.Alldata.files[this.siderData[this.siderNum - 1]];
     },
-    updataStore (newConfig) {
+    updateStore (newConfig) {
       console.log('父级执行更新，数据:', newConfig)
       if (newConfig.deleteMessage) {
         //删除

@@ -5,7 +5,7 @@
         :message="item" 
         :status="status" 
         :key="index" 
-        @updataStore="updataStore"  
+        @updateStore="updateStore"  
       ></itemList>
     </div>
 </template>  
@@ -21,12 +21,12 @@ export default {
     }
   },
   mounted() {
-    // console.log(666, this.updataStore)
+    // console.log(666, this.updateStore)
   },
   props: {
     message: Object,
     status: Boolean,
-    updataStore: Function,
+    updateStore: Function,
   },
   components: {
     itemList: itemList

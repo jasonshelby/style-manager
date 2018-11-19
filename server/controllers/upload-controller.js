@@ -53,11 +53,8 @@ const uploadFile = (req, res)=> {
 }
 
 const updateFile = (req, res) => {
-
   const newConfig = parseFormData(req.files, req.body)
-  updateConfig(newConfig)
-
-  // console.log('更新配置: ', newConfig)
+  // updateConfig(newConfig)
 
   if(newConfig.sketchName) {
     //...
@@ -69,40 +66,29 @@ const updateFile = (req, res) => {
     })
   }
 
-
   if(newConfig.zipName) {
     console.log('更新配置: ', newConfig)
     UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
-
-    console.log('delete path:', newConfig.path + '__MACOSX')
-    // removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
-
-
-    console.log(888)
-    // if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
-    //   fs.renameSync(newConfig.path + newConfig.originalZipName, newConfig.path+ 'static');
-    //   updateConfig(newConfig)
-    //   console.log(999)
-
-
-    //   res.json({
-    //     success: true,
-    //     data: updateConfig(newConfig),
-    //     errorMessage: null,
-    //   })
-    // } else {
-    //   console.log(111)
-
-    //   res.json({
-    //     success: false,
-    //     data: null,
-    //     errorMessage: '文件不合格'
-    //   })
-    // }
-  }
-
+    removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
+    removeDirSync(newConfig.path + 'static', e => e ? console.log('删除失败') : console.log('static删除成功'))
   
+    if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
+      fs.renameSync(newConfig.path + newConfig.originalZipName, newConfig.path+ 'static');
+      updateConfig(newConfig)
 
+      res.json({
+        success: true,
+        data: newConfig,
+        errorMessage: null,
+      })
+    } else {
+      res.json({
+        success: false,
+        data: null,
+        errorMessage: '文件不合格'
+      })
+    }
+  }
 }
 
 module.exports = {

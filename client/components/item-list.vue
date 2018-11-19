@@ -130,11 +130,8 @@ export default {
     },
     handleSuccess (res) {
       if(res.success) {
-        console.log(555, res)
-        this.$emit('updataStore', res.data);
-
+        this.$emit('updateStore', res.data);
         this.$Message.success('更新成功')
-
       } else {
         this.$Message.error(`压缩文件内缺少${res.error}文件，上传失败`);
       }
@@ -157,7 +154,7 @@ export default {
         this.modal_loading = false;
         this.modal = false;
         if (res.success) {
-          this.$emit('updataStore', {
+          this.$emit('updateStore', {
             deleteMessage: res.data
           });
           this.$Message.success('删除成功');

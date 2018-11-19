@@ -126,9 +126,8 @@ export default {
     },
     handleSuccess (res) {
       if (res.success) {
-        //触发父级组件的 updataStore，并传参res.data
 
-        this.$emit('updataStore', res.data);
+        this.$emit('updateStore', res.data);
         this.$Message.success('上传成功');
         this.handleCancel()
       } else {
