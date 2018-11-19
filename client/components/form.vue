@@ -38,7 +38,7 @@
     </FormItem>
     <FormItem>
       <Button type="primary" @click="handleSubmit('innerData')" :loading="checkMessage.loadingStatus">提交</Button>
-      <Button type="ghost" @click="handleCancel('innerData', 'uploadFiles')" style="margin-left: 8px" >Cancel</Button>
+      <Button type="ghost" @click="handleCancel" style="margin-left: 8px" >Cancel</Button>
     </FormItem>
   </Form>
 </template>
@@ -95,7 +95,7 @@ export default {
       }
       return false;
     },
-    handleSubmit(name) {
+    handleSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.checkMessage.loadingStatus = true;
@@ -105,39 +105,16 @@ export default {
           myData.append('detail', JSON.stringify(this.innerData))
           myData.append('zip', this.files.zip)
           myData.append('sketch', this.files.sketch)
-
-
-          // fetch('http://localhost:3000/demo',{
-          //   method: "POST",
-          //   body: myData,
-          // })
           var xhr = new XMLHttpRequest()
           xhr.open("POST", "http://localhost:3000/uploadFile", true);
 
-          xhr.onreadystatechange = function () {
+          xhr.onreadystatechange = () => {
             if (xhr.readyState == 4 && xhr.status == 200) {
-              var body = document.body
-              var a = document.createElement('a')
-              a.text = 'hahah'
-              a.href = xhr.responseText
-              body.appendChild(a)
-              console.log(xhr.responseText)
+              this.handleSuccess(JSON.parse(xhr.responseText))
             }
           }
           xhr.send(myData);
 
-          
-          // var xhr = new XMLHttpRequest()
-          // xhr.open("POST", "http://localhost:3000/demo", true);
-
-          // xhr.onreadystatechange = function () {
-          //   if (xhr.readyState == 4 && xhr.status == 200) {
-          //     console.log(xhr.responseText)
-          //   }
-          // }
-          // xhr.send(myData);
-
-          // this.uploadFiles();
           // fetch('http://localhost:3000/uploadFile',{
           //   method: "POST",
           //   body: JSON.stringify(this.innerData)
@@ -147,46 +124,23 @@ export default {
         }
       })
     },
-    // uploadFiles() {
-    //   this.$refs.uploadFiles.post(this.files.sketch);
-    //   this.$refs.uploadFiles.post(this.files.zip);
-    // },
-    handleSuccess (res, file) {//验证zip内文件的情况，返回结果
-      const fileExt = file.name.replace(/.+\./, "").toLowerCase();
-      console.log(res);
-      if (fileExt == 'zip') {
-        if (res.error){
-          this.checkMessage.suc = false;
-          this.checkMessage.errorFile = res.error;
-          //文件验证失败，
-        } else {
-          this.checkMessage.dataStore = res;
-          //zip验证成功
-        }
-        this.checkMessage.resfiles++;
-      } else if (fileExt == 'sketch') {
-        this.checkMessage.resfiles++;
-      }
+    handleSuccess (res) {
+      if (res.success) {
+        //触发父级组件的 updataStore，并传参res.data
 
-      if (this.checkMessage.resfiles == 2) {
-        if (this.checkMessage.suc == false) {
-          this.$Message.error(`压缩文件内缺少${this.checkMessage.errorFile}文件，上传失败`);
-        } else {
-          this.$emit('resetdata', this.checkMessage.dataStore);
-          this.$Message.success('上传成功');
-        }
-        this.checkMessage.resfiles = 0;
-        this.checkMessage.suc = true;
-        this.checkMessage.loadingStatus = false;
-        this.handleCancel('innerData', 'uploadFiles');
+        this.$emit('updataStore', res.data);
+        this.$Message.success('上传成功');
+        this.handleCancel()
+      } else {
+        this.$Message.error(res.errorMessage);
       }
     },
-    handleCancel(part1, part2) {
+    handleCancel() {
         this.checkMessage.loadingStatus= false;
         this.files.zip = 0
         this.files.sketch = 0
-        this.$refs[part1].resetFields()
-        this.$refs[part2].clearFiles()
+        this.$refs.innerData.resetFields()
+        this.$refs.uploadFiles.clearFiles()
     }
   }
 }

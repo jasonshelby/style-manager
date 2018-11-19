@@ -1,7 +1,7 @@
 const multer = require('multer');
 const {
   parseFormData,
-  updataConfig,
+  updateConfig,
 } = require('../services/config-service');
 const {
   UnzipToPosition,
@@ -35,7 +35,7 @@ const uploadFile = (req, res)=> {
 
   if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
     fs.renameSync(newConfig.path + newConfig.originalZipName, newConfig.path+ 'static');
-    updataConfig(newConfig)
+    updateConfig(newConfig)
     
     res.json({
       success: true,
@@ -47,50 +47,68 @@ const uploadFile = (req, res)=> {
     res.json({
       success: false,
       data: null,
-      errorMessage: '文件不合格',
+      errorMessage: '压缩文件夹内缺少响应文件',
     })
   }
 }
 
-const updataFile = (req, res) => {
+const updateFile = (req, res) => {
+
   const newConfig = parseFormData(req.files, req.body)
+  updateConfig(newConfig)
 
-  if(newConfig.zipName) {
-    UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
-    removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
-
-    if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
-      updataConfig(newConfig)
-
-      res.json({
-        success: true,
-        data: updataConfig(newConfig),
-        errorMessage: null,
-      })
-    } else {
-      res.json({
-        success: false,
-        data: null,
-        errorMessage: '文件不合格'
-      })
-    }
-  }
+  // console.log('更新配置: ', newConfig)
 
   if(newConfig.sketchName) {
     //...
+
     res.json({
       success: true,
-      data: null,
-      errorMessage: '文件不合格'
+      data: newConfig,
+      errorMessage: null,
     })
   }
+
+
+  if(newConfig.zipName) {
+    console.log('更新配置: ', newConfig)
+    UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
+
+    console.log('delete path:', newConfig.path + '__MACOSX')
+    // removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
+
+
+    console.log(888)
+    // if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
+    //   fs.renameSync(newConfig.path + newConfig.originalZipName, newConfig.path+ 'static');
+    //   updateConfig(newConfig)
+    //   console.log(999)
+
+
+    //   res.json({
+    //     success: true,
+    //     data: updateConfig(newConfig),
+    //     errorMessage: null,
+    //   })
+    // } else {
+    //   console.log(111)
+
+    //   res.json({
+    //     success: false,
+    //     data: null,
+    //     errorMessage: '文件不合格'
+    //   })
+    // }
+  }
+
+  
 
 }
 
 module.exports = {
   router,
   uploadFile,
-  updataFile,
+  updateFile,
 };
 
 //重命名

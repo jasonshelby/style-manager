@@ -18,7 +18,8 @@ function checkFile (config, checkChilds) {
 
 function UnzipToPosition(from, to) {
   let unzip = new AdmZip(from);
-  unzip.extractAllTo(to, /*overwrite*/true);
+
+  console.log(unzip.extractAllTo(to, /*overwrite*/true))
 }
 
 function makedirSync(url,mode,cb){

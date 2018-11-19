@@ -1,16 +1,29 @@
-const { deleteConfig, writeConfig } = require('../services/config-service');
+const { deleteConfig } = require('../services/config-service');
 const { removeDirSync } = require('../services/file-service');
 
 module.exports = function (req, res) {
   req.on('data',function(data) {
-    const deletePath = data.toString();
-    const json = deleteConfig(deletePath);
+    const config = JSON.parse(data)
 
-    removeDirSync(deletePath,() => {
-      console.log('删除成功');
-    });
+    removeDirSync(config.path, (e) => {
+      if(!e) {
+        const deleteMessage = deleteConfig(config.type, config.name);
+        console.log('删除成功')
 
-    writeConfig(json);
-    res.json(json);
+        res.json({
+          success: true,
+          data: deleteMessage,
+          errorMessage: null,
+        })
+      } else {
+        res.json({
+          success: false,
+          errorMessage: JSON.stringify(e)
+        })
+
+        console.log(e)
+      }
+    })
+
   });
 };

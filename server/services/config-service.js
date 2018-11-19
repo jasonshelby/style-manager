@@ -30,7 +30,7 @@ function parseFormData (files, data) {
   return result;
 }
 
-function updataConfig(newConfig) {
+function updateConfig(newConfig) {
   let globolConfig = readConfig()
   let projectMessage = globolConfig.files[newConfig.type][newConfig.name]
   newConfig.static = configDomain + newConfig.path
@@ -47,18 +47,23 @@ function updataConfig(newConfig) {
   return globolConfig.files
 }
 
+function deleteConfig (type, name) {
+  const json = readConfig();
+  const project = json.files[type][name]
+
+  delete json.files[type][name]
+  writeConfig(json);
+
+  return project;
+}
+
 
 module.exports = {
   parseFormData,
   readConfig,
   writeConfig,
-  updataConfig,
-  deleteConfig(path){
-    const json = this.readConfig();
-    const arr = path.split('/');
-    delete json.files[arr[1]][arr[2]];
-    return json;
-  },
+  updateConfig,
+  deleteConfig,
   clear(){
     const json = this.readConfig();
     const types = json.types;

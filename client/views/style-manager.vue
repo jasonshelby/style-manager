@@ -21,8 +21,8 @@
       </Sider>
 
       <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
-        <Formpage v-if="siderNum == 0" :message="siderData" @resetdata="handleRet" ></Formpage>
-        <ContentPage v-else :message="listData" @resetdata="handleRet" :status="isFE"></ContentPage>
+        <Formpage v-if="siderNum == 0" :message="siderData" @updataStore="updataStore" ></Formpage>
+        <ContentPage v-else :message="listData" :updataStore="updataStore" :status="isFE"></ContentPage>
       </Content>
     </Layout>
 
@@ -80,8 +80,22 @@ export default {
       this.siderNum = index;
       this.listData = this.Alldata.files[this.siderData[this.siderNum - 1]];
     },
-    handleRet(msg) {
-      this.Alldata = msg;
+    updataStore (newConfig) {
+      console.log('父级执行更新，数据:', newConfig)
+      if (newConfig.deleteMessage) {
+        //删除
+        this.$delete( this.Alldata.files[newConfig.deleteMessage.type], [newConfig.deleteMessage.name] )
+      } else {
+        let projectMessage = this.Alldata.files[newConfig.type][newConfig.name]
+  
+        if(projectMessage) {
+          //替换
+          projectMessage = Object.assign(projectMessage, newConfig);
+        } else {
+          //添加
+          this.Alldata.files[newConfig.type][newConfig.name] = newConfig
+        }
+      }
     },
     changeToUE() {
       this.isFE = false;
@@ -106,13 +120,11 @@ export default {
   created() {
     fetch('http://localhost:3000/')
     .then(res => {
-      console.log(111, res)
-        return res.text();
+      return res.text();
     })
     .then(res => {
-
       const data = JSON.parse(res);
-      console.log(222, res)
+      console.log('全局数据: ', data)
 
       this.Alldata = data;
       this.siderData = data.types;

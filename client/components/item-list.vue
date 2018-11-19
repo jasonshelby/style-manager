@@ -23,7 +23,7 @@
           <Button 
             type="ghost" 
             class="f-left"
-            @click="handleDownLoad(message.configDomain + message.sketchName, message.sketchName)"
+            @click="handleDownLoad(message.static + message.sketchName, message.sketchName)"
             v-show="status">下载sketch</Button>
         </ButtonGroup>
         <Button type="ghost" @click="del()" class="f-right">
@@ -40,7 +40,7 @@
           :before-upload="handleBeforeUpload"
           :on-success="handleSuccess"
           :show-upload-list="false"
-          action="http://localhost:3000/updataFile">
+          action="http://localhost:3000/updateFile">
           <Button  type="ghost" icon="ios-cloud-upload-outline" :loading="loadingStatus">更新文件</Button>
         </Upload>
 
@@ -55,7 +55,7 @@
             <p>删除之后，文件将无法恢复，确认删除吗?</p>
           </div>
           <div slot="footer">
-            <Button type="error" size="large" long :loading="modal_loading" @click="handleDelete(message.path)">删除</Button>
+            <Button type="error" size="large" long :loading="modal_loading" @click="handleDelete(message)">删除</Button>
           </div>
         </Modal>
       </Card>
@@ -96,23 +96,45 @@ export default {
       this.updataTime = `${date.getMonth(timeNum) + 1}月${date.getDate(timeNum) + 1}日
         ${date.getHours(timeNum)}:${minute}`;
     },
-    handleBeforeUpload(path){
+    handleBeforeUpload(file){
+      const myData = new FormData();
+      const fileFormat = file.name.split('.').pop()
+
+      myData.append('detail', JSON.stringify({
+        name: this.message.name,
+        type: this.message.type,
+      }))
+      myData.append(fileFormat, file)
+
+      var xhr = new XMLHttpRequest()
+      xhr.open("POST", "http://localhost:3000/updateFile", true);
+      xhr.onreadystatechange =  () => {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          this.handleSuccess(JSON.parse(xhr.responseText))
+        }
+      }
+      xhr.send(myData);
       this.loadingStatus = true;
-      fetch('http://localhost:3000/updataFile', {
-          method: "POST",
-          body: this.message.path
-      })
-      .then(res => {
-        return res.text();
-      })
-      .then(res => {
-        console.log(res);
-      })
+      // fetch('http://localhost:3000/updateFile', {
+      //     method: "POST",
+      //     body: this.message.path
+      // })
+      // .then(res => {
+      //   return res.text();
+      // })
+      // .then(res => {
+      //   console.log(res);
+      // })
+
+      return false
     },
-    handleSuccess (res, file) {
-      if(!res.error) {
-        this.$emit('resetdata', res);
+    handleSuccess (res) {
+      if(res.success) {
+        console.log(555, res)
+        this.$emit('updataStore', res.data);
+
         this.$Message.success('更新成功')
+
       } else {
         this.$Message.error(`压缩文件内缺少${res.error}文件，上传失败`);
       }
@@ -121,20 +143,27 @@ export default {
     del() {
       this.modal = true;
     },
-    handleDelete(path) {
+    handleDelete(config) {
       this.modal_loading = true;
       fetch('http://localhost:3000/deleteFile', {
-          method: "POST",
-          body: path
+        method: "POST",
+        body: JSON.stringify(config)
       })
       .then(res => {
         return res.text();
       })
       .then(res => {
-        this.$emit('resetdata', JSON.parse(res));
-        this.modal_loading = false;
-        this.modal = false;
-        this.$Message.success('删除成功');
+        res = JSON.parse(res)
+        console.log(res)
+        if (res.success) {
+          this.$emit('updataStore', {
+            deleteMessage: res.data
+          });
+          this.modal_loading = false;
+          this.modal = false;
+          this.$Message.success('删除成功');
+        }
+        
       })
     },
     handleDownLoad(content, filename) {

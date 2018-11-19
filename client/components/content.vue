@@ -1,7 +1,12 @@
 <template>
     <div>
-      {{message}}
-      <itemList v-for="(item, index) in message" :message="item" :status="status" :key="index" @resetdata="resetdata"></itemList>
+      <itemList 
+        v-for="(item, index) in message" 
+        :message="item" 
+        :status="status" 
+        :key="index" 
+        @updataStore="updataStore"  
+      ></itemList>
     </div>
 </template>  
 
@@ -16,21 +21,16 @@ export default {
     }
   },
   mounted() {
-    console.log(this.message)
-    console.log(this.status)
+    // console.log(666, this.updataStore)
   },
   props: {
     message: Object,
-    status: Boolean
+    status: Boolean,
+    updataStore: Function,
   },
   components: {
     itemList: itemList
   },
-  methods: {
-    resetdata(data) {
-      this.$emit('resetdata', data);
-    }
-  }
 }
 </script>
   
