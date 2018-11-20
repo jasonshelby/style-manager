@@ -8,7 +8,7 @@ module.exports = function (req, res) {
     removeDirSync(config.path, (e) => {
       if(!e) {
         const deleteMessage = deleteConfig(config.type, config.name);
-        console.log('删除成功')
+        console.log('项目删除成功')
 
         res.json({
           success: true,
@@ -20,8 +20,6 @@ module.exports = function (req, res) {
           success: false,
           errorMessage: JSON.stringify(e)
         })
-
-        console.log(e)
       }
     })
 

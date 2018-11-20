@@ -22,7 +22,6 @@ const router = multer({ storage: multer.diskStorage({
   },
   //设置文件名的钩子
   filename: function (req, file, cb) {
-    // const filename = (file.originalname.split('.')[1] == 'zip') ? 'fornow.zip' : 'origin.sketch';
     cb(null, file.originalname);
   }
 })})
@@ -32,6 +31,7 @@ const uploadFile = (req, res)=> {
 
   UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
   removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
+  removeDirSync(newConfig.path + 'static', e => e ? console.log('删除失败') : console.log('static删除成功'))
 
   if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
     fs.renameSync(newConfig.path + newConfig.originalZipName, newConfig.path+ 'static');
@@ -54,11 +54,9 @@ const uploadFile = (req, res)=> {
 
 const updateFile = (req, res) => {
   const newConfig = parseFormData(req.files, req.body)
-  // updateConfig(newConfig)
+  console.log('更新配置: ', newConfig)
 
   if(newConfig.sketchName) {
-    //...
-
     res.json({
       success: true,
       data: newConfig,
@@ -67,27 +65,7 @@ const updateFile = (req, res) => {
   }
 
   if(newConfig.zipName) {
-    console.log('更新配置: ', newConfig)
-    UnzipToPosition(newConfig.path + newConfig.zipName, newConfig.path);
-    removeDirSync(newConfig.path + '__MACOSX', e => e ? console.log('删除失败') : console.log('__MACOSX删除成功'))
-    removeDirSync(newConfig.path + 'static', e => e ? console.log('删除失败') : console.log('static删除成功'))
-  
-    if(checkFile(newConfig, [ 'assets', 'index.html', 'links', 'preview'])) {
-      fs.renameSync(newConfig.path + newConfig.originalZipName, newConfig.path+ 'static');
-      updateConfig(newConfig)
-
-      res.json({
-        success: true,
-        data: newConfig,
-        errorMessage: null,
-      })
-    } else {
-      res.json({
-        success: false,
-        data: null,
-        errorMessage: '文件不合格'
-      })
-    }
+    uploadFile(req, res)
   }
 }
 
@@ -96,8 +74,3 @@ module.exports = {
   uploadFile,
   updateFile,
 };
-
-//重命名
-// fs.renameSync(pathSpace+ '/'+ filename.split('.')[0], pathSpace+ '/static');
-//删除多余文件
-// this.removeDirSync(pathSpace + '/__MACOSX');
