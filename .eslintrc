@@ -5,9 +5,6 @@
           2,
           "single"
       ],
-      "vue/no-parsing-error": [2, {
-        "x-invalid-end-tag": false
-      }],
       "linebreak-style": [
           2,
           "unix"
@@ -20,6 +17,9 @@
     "ecmaFeatures": {
         "modules": true,
         "experimentalObjectRestSpread": true
+    },
+    "parserOptions": {
+      "sourceType": "module"
     },
     "extends": "eslint:recommended"
 }
